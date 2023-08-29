@@ -5,7 +5,7 @@ import pyodbc
 
 # SQL Server connection details
 server = 'DESKTOP-8PP0U2U'
-database = 'TEST'  # Name of the database you've manually created
+database = 'TEST' 
 
 # Establish a connection to the newly created database
 conn = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER={server};DATABASE={database}')
@@ -25,19 +25,19 @@ while True:
 
     for movie in content.select('.lister-item-content'):
         try:
-            # Your updated data extraction code
-            rating = movie.select('.ratings-imdb-rating strong')[0].get_text() if movie.select('.ratings-imdb-rating strong') else "N/A"
-            votes = movie.select('.sort-num_votes-visible span')[1]['data-value'] if movie.select('.sort-num_votes-visible span') else "N/A"
-            metascore = movie.select('.ratings-metascore span')[0].get_text() if movie.select('.ratings-metascore span') else "N/A"
+            # Data extraction code
+            rating = movie.select('.ratings-imdb-rating strong')[0].get_text() if movie.select('.ratings-imdb-rating strong') else ""
+            votes = movie.select('.sort-num_votes-visible span')[1]['data-value'] if movie.select('.sort-num_votes-visible span') else ""
+            metascore = movie.select('.ratings-metascore span')[0].get_text() if movie.select('.ratings-metascore span') else ""
             title = movie.select('.lister-item-header a')[0].get_text().strip()
             year = movie.select('.lister-item-year')[0].get_text().strip('()')
-            duration = movie.select('.runtime')[0].get_text() if movie.select('.runtime') else "N/A"
-            gross = "N/A"
+            duration = movie.select('.runtime')[0].get_text() if movie.select('.runtime') else ""
+            gross = ""
             gross_element = movie.find('span', string='Gross:')
             if gross_element:
                 gross = gross_element.find_next_sibling().get_text().strip()
-            director = movie.select('.text-muted .text-muted')[2].get_text().split('|')[0].strip() if len(movie.select('.text-muted .text-muted')) > 2 else "N/A"
-            stars = movie.select('.text-muted .text-muted')[2].get_text().split('|')[1].strip() if len(movie.select('.text-muted .text-muted')) > 2 else "N/A"
+            director = movie.select('.text-muted .text-muted')[2].get_text().split('|')[0].strip() if len(movie.select('.text-muted .text-muted')) > 2 else ""
+            stars = movie.select('.text-muted .text-muted')[2].get_text().split('|')[1].strip() if len(movie.select('.text-muted .text-muted')) > 2 else ""
             genre = movie.select('.genre')[0].get_text().strip()
             
             
