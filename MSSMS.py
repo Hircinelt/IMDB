@@ -11,9 +11,14 @@ database = 'TEST'
 conn = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER={server};DATABASE={database}')
 cursor = conn.cursor()
 
+# Delete existing data from IMDB table
+delete_query = "DELETE FROM IMDB"
+cursor.execute(delete_query)
+conn.commit()
+
 # Scraping IMDb data
 headers = {'Accept-Language': 'en-US,en;q=0.5'}
-base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=25000,&sort=user_rating,desc'
+base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=5000,&sort=user_rating,desc'
 start_page = 1
 movies_per_page = 50
 movie_data_list = []
@@ -30,6 +35,8 @@ while True:
             votes = movie.select('.sort-num_votes-visible span')[1]['data-value'] if movie.select('.sort-num_votes-visible span') else ""
             metascore = movie.select('.ratings-metascore span')[0].get_text() if movie.select('.ratings-metascore span') else ""
             title = movie.select('.lister-item-header a')[0].get_text().strip()
+            #title_element = movie.select_one('.lister-item-header a')
+            #title = title_element.get_text().strip() + " " + title_element.find_next('span', class_='lister-item-year').get_text().strip()
             year = movie.select('.lister-item-year')[0].get_text().strip('()')
             duration = movie.select('.runtime')[0].get_text() if movie.select('.runtime') else ""
             gross = movie.find('span', {'name': 'nv'}).get('data-value').replace(',', '') if movie.find('span', {'name': 'nv'}) else ""
@@ -104,6 +111,11 @@ for data in movie_data_list:
     )
     cursor.execute(insert_query, values)
     conn.commit()
+    
+# Execute the procedure
+procedure_query = "EXEC UpdateColumns"
+cursor.execute(procedure_query)
+conn.commit()
 
 # Close the database connection
 conn.close()
