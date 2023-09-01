@@ -5,20 +5,20 @@ import pyodbc
 
 # SQL Server connection details
 server = 'DESKTOP-8PP0U2U'
-database = 'TEST' 
+database = 'IMDB' 
 
 # Establish a connection to the newly created database
 conn = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER={server};DATABASE={database}')
 cursor = conn.cursor()
 
 # Delete existing data from IMDB table
-delete_query = "DELETE FROM IMDB"
+delete_query = "DELETE FROM Movies"
 cursor.execute(delete_query)
 conn.commit()
 
 # Scraping IMDb data
 headers = {'Accept-Language': 'en-US,en;q=0.5'}
-base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=5000,&sort=user_rating,desc'
+base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=25000,&sort=user_rating,desc'
 start_page = 1
 movies_per_page = 50
 movie_data_list = []
@@ -87,7 +87,7 @@ while True:
 # Insert data into the database
 for data in movie_data_list:
     insert_query = '''
-    INSERT INTO IMDB (Title, Year, Duration, Gross, Director, Stars, Genre, Rating, Votes, Metascore, Star1, Star2, Star3, Star4, Genre1, Genre2, Genre3)
+    INSERT INTO Movies (Title, Year, Duration, Gross, Director, Stars, Genre, Rating, Votes, Metascore, Star1, Star2, Star3, Star4, Genre1, Genre2, Genre3)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     '''
     values = (
