@@ -45,7 +45,7 @@ while True:
             #title = title_element.get_text().strip() + " " + title_element.find_next('span', class_='lister-item-year').get_text().strip()
             year = movie.select('.lister-item-year')[0].get_text().strip('()')
             duration = movie.select('.runtime')[0].get_text() if movie.select('.runtime') else ""
-            gross = movie.find('span', {'name': 'nv'}).get('data-value').replace(',', '') if movie.find('span', {'name': 'nv'}) else ""
+            gross = movie.find_all('span', {'name': 'nv'})[1].get('data-value', '').replace(',', '') if len(movie.find_all('span', {'name': 'nv'})) > 1 else ""
             director = movie.select_one('a[href^="/name/"]').get_text() if movie.select_one('a[href^="/name/"]') else ""
             stars_elements = movie.select('p:-soup-contains("Stars:") a')
             stars = ', '.join([star.get_text() for star in stars_elements])
