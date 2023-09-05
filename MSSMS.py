@@ -16,6 +16,11 @@ delete_query = "DELETE FROM Movies"
 cursor.execute(delete_query)
 conn.commit()
 
+# Execute the procedure
+procedure_query = "EXEC RevertColumns"
+cursor.execute(procedure_query)
+conn.commit()
+
 # Scraping IMDb data
 headers = {'Accept-Language': 'en-US,en;q=0.5'}
 base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=25000,&sort=user_rating,desc'
@@ -34,6 +39,7 @@ while True:
             rating = movie.select('.ratings-imdb-rating strong')[0].get_text() if movie.select('.ratings-imdb-rating strong') else ""
             votes = movie.select('.sort-num_votes-visible span')[1]['data-value'] if movie.select('.sort-num_votes-visible span') else ""
             metascore = movie.select('.ratings-metascore span')[0].get_text() if movie.select('.ratings-metascore span') else ""
+            id = movie.select_one('.lister-item-index.unbold.text-primary').get_text(strip=True).rstrip('.')
             title = movie.select('.lister-item-header a')[0].get_text().strip()
             #title_element = movie.select_one('.lister-item-header a')
             #title = title_element.get_text().strip() + " " + title_element.find_next('span', class_='lister-item-year').get_text().strip()
@@ -73,7 +79,8 @@ while True:
                 "star4": star4,
                 "genre1": genre1,
                 "genre2": genre2,
-                "genre3": genre3
+                "genre3": genre3,
+                "id": id
             }
             movie_data_list.append(data)
         except IndexError:
@@ -87,8 +94,8 @@ while True:
 # Insert data into the database
 for data in movie_data_list:
     insert_query = '''
-    INSERT INTO Movies (Title, Year, Duration, Gross, Director, Stars, Genre, Rating, Votes, Metascore, Star1, Star2, Star3, Star4, Genre1, Genre2, Genre3)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO Movies (Title, Year, Duration, Gross, Director, Stars, Genre, Rating, Votes, Metascore, Star1, Star2, Star3, Star4, Genre1, Genre2, Genre3, ID)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     '''
     values = (
         data["title"],
@@ -107,7 +114,8 @@ for data in movie_data_list:
         data["star4"],
         data["genre1"],
         data["genre2"],
-        data["genre3"]
+        data["genre3"],
+        data["id"]
     )
     cursor.execute(insert_query, values)
     conn.commit()
