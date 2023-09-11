@@ -23,7 +23,7 @@ conn.commit()
 
 # Scraping IMDb data
 headers = {'Accept-Language': 'en-US,en;q=0.5'}
-base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=25000,&sort=user_rating,desc'
+base_url = 'https://www.imdb.com/search/title/?title_type=feature&num_votes=15000,&sort=user_rating,desc'
 start_page = 1
 movies_per_page = 50
 movie_data_list = []
